@@ -10,4 +10,4 @@ Man, that's virtually my first program on GitHub. So I would appreciate it a lot
 
 ## How To Run
 1. You can directly run the "main.py" file. Then it will run as usual (as the homework required) and automatically save a log file named after a 5 digit random number.
-2. Or you can open python at the folder and run "from main import *". That will do.
+2. Or you can open python in terminal at the folder path and run "from main import *". That will do.
