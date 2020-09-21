@@ -4,7 +4,7 @@ def lcboard(stat):
     """returns the str that represents the board"""
     l1 = " " + " ".join(map(str, range(1,rowsum+1))) + "\n"
     # todo: consider optmizing the printout?\
-    #  sth to indicate the row put, and try optimize the situation when rowsum gt 9
+    # sth to indicate the row put, and try optimize the situation when rowsum gt 9
     l2 = "\n".join("|"+
         "|".join(stat[row][line] for row in range(1,rowsum+1)) +"|"
         for line in range(linesum,0,-1))
@@ -45,7 +45,7 @@ def lclog(text, needprint=True):
 
 def lcgame():
     """the main game function"""
-    start = "Hi,I'm Laura Crauft. I wanna play a chess with you. I use 'O' pieces, you use 'X' pieces.\n" \
+    start = "Hi,I'm Laura. I wanna play a chess with you. I use 'O' pieces, you use 'X' pieces.\n" \
             "Game rule:\n Take turns to choose a row number to put your piece. Then your piece will drop down.\n" \
             f"\t Once there are {piece_to_win} pieces together in the same line, that player wins.\n" \
             "That's it. Lets start! Here is the default stat of the board." \
@@ -55,8 +55,28 @@ def lcgame():
     lclog(lcboard(stat))
 
     while True:
-        tmp = choice([i for i in range(1,rowsum+1) if stat[i][0]<linesum])
-        lclog(">>>My turn! I lay 'O' on row {}.".format(tmp))
+        if not twoplayer:
+            tmp = choice([i for i in range(1,rowsum+1) if stat[i][0]<linesum])
+            lclog(">>>My turn! I lay 'O' on row {}.".format(tmp))
+        else:
+            while True:
+                tmp = input(">>>My turn, Choose a row to drop my 'O' (1-{}): ".format(rowsum))
+                lclog(">>>My turn, Choose a row to drop my 'O' (1-{}): ".format(rowsum) + tmp, False)
+                try:
+                    tmp = int(tmp)
+                except ValueError:
+                    lclog("Sorry. I didn't get it. Input again.")
+                    continue
+
+                if tmp > rowsum or tmp < 1:
+                    lclog("Row number should be between 1 and 8, please input again.")
+                    continue
+                elif stat[tmp][0] >= linesum:
+                    lclog("There isn't any space on that row, pls input again.")
+                    continue
+
+                break
+
         stat[tmp][0] += 1
         stat[tmp][stat[tmp][0]] = "O"
         lclog(lcboard(stat))
@@ -91,6 +111,7 @@ def lcgame():
 pieces = 0
 rowsum, linesum = 8, 6
 piece_to_win = 4
+twoplayer = False
 
 stat = [0] + [{j+1:" " for j in range(linesum)} for i in range(rowsum)]
 for i in range(rowsum): stat[i+1][0]=0
@@ -109,12 +130,13 @@ else:
     idcode = -1
 
     def settings():
-        global rowsum, linesum, idcode, piece_to_win
+        global rowsum, linesum, idcode, piece_to_win, twoplayer
         if input("Change Settings? If not, just leave it blank: "):
             rowsum = int(input("new rowsum? ") or rowsum)
             linesum = int(input("new linesum? ") or linesum)
             idcode = input("specify log file id? leave it blank to avoid creating a log file: ") or idcode
             piece_to_win = int(input("change pieces to win? ") or piece_to_win)
+            twoplayer = bool(input("two player? ") or twoplayer)
 
 
     def start():
